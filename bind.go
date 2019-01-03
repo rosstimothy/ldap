@@ -1,12 +1,12 @@
 package ldap
 
 import (
-	"mellium.im/sasl"
 	"net"
 	"strings"
 	"errors"
 	"fmt"
 
+	"github.com/mellium/sasl"
 	"gopkg.in/asn1-ber.v1"
 )
 
