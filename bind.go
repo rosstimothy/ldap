@@ -1,6 +1,9 @@
 package ldap
 
 import (
+	"mellium.im/sasl"
+	"net"
+	"strings"
 	"errors"
 	"fmt"
 
@@ -132,4 +135,120 @@ func (l *Conn) UnauthenticatedBind(username string) error {
 	}
 	_, err := l.SimpleBind(req)
 	return err
+}
+
+// SaslBindResult contains the response from the server
+type SaslBindResult struct {
+	Credentials string
+	Controls    []Control
+}
+
+func (l *Conn) spn() (string, error) {
+	addr := l.conn.RemoteAddr().String()
+	names, err := net.LookupAddr(addr)
+	if err != nil {
+		return "", errors.New("unable to lookup host")
+	}
+	if len(names) <= 0 {
+		return "", errors.New("no host names found")
+	}
+
+	return fmt.Sprintf("ldap/%s", names[0]), nil
+}
+
+//SaslBind performs an ldap sasl bind
+func (l *Conn) SaslBind() error {
+	spn, err := l.spn()
+	if err != nil {
+		return err
+	}
+	client := sasl.NewClient(sasl.GSSAPI(spn))
+
+	more, resp, err := client.Step(nil)
+	for {
+		if err != nil {
+			return err
+		}
+		if !more {
+			break
+		}
+
+		res, err := l.sendSaslBindRequest(resp)
+		if err != nil {
+			if e, ok := err.(*Error); ok {
+				if e.ResultCode != LDAPResultSaslBindInProgress {
+					return errors.New("authentication failed")
+				}
+			}
+		}
+		more, resp, err = client.Step([]byte(res.Credentials))
+	}
+
+	return nil
+}
+
+func (l *Conn) sendSaslBindRequest(credentials []byte) (*SaslBindResult, error) {
+	packet := ber.Encode(ber.ClassUniversal, ber.TypeConstructed, ber.TagSequence, nil, "LDAP Request")
+	packet.AppendChild(ber.NewInteger(ber.ClassUniversal, ber.TypePrimitive, ber.TagInteger, l.nextMessageID(), "MessageID"))
+
+	request := ber.Encode(ber.ClassApplication, ber.TypeConstructed, ApplicationBindRequest, nil, "Bind Request")
+	request.AppendChild(ber.NewInteger(ber.ClassUniversal, ber.TypePrimitive, ber.TagInteger, 3, "Version"))
+	request.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, "", "Name"))
+
+	sasl := ber.Encode(ber.ClassContext, ber.TypeConstructed, 3, nil, "SASL")
+	sasl.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, "GSSAPI", "Mechanism"))
+	if len(credentials) > 0 {
+		sasl.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, string(credentials), "Credentials"))
+	}
+	request.AppendChild(sasl)
+	packet.AppendChild(request)
+
+	if l.Debug {
+		ber.PrintPacket(packet)
+	}
+
+	msgCtx, err := l.sendMessage(packet)
+	if err != nil {
+		return nil, err
+	}
+	defer l.finishMessage(msgCtx)
+
+	packetResponse, ok := <-msgCtx.responses
+	if !ok {
+		return nil, NewError(ErrorNetwork, errors.New("ldap: response channel closed"))
+	}
+	packet, err = packetResponse.ReadPacket()
+	l.Debug.Printf("%d: got response %p", msgCtx.id, packet)
+	if err != nil {
+		return nil, err
+	}
+
+	if l.Debug {
+		if err = addLDAPDescriptions(packet); err != nil {
+			return nil, err
+		}
+		ber.PrintPacket(packet)
+	}
+
+	var b strings.Builder
+	if len(packet.Children[1].Children) > 3 {
+		b.Write(packet.Children[1].Children[3].Data.Bytes())
+	}
+	result := &SaslBindResult{
+		Credentials: b.String(),
+		Controls: make([]Control, 0),
+	}
+
+	if len(packet.Children) == 3 {
+		for _, child := range packet.Children[2].Children {
+			decodedChild, decodeErr := DecodeControl(child)
+			if decodeErr != nil {
+				return nil, fmt.Errorf("failed to decode child control: %s", decodeErr)
+			}
+			result.Controls = append(result.Controls, decodedChild)
+		}
+	}
+
+	err = GetLDAPError(packet)
+	return result, err
 }

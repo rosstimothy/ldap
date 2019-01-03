@@ -275,7 +275,11 @@ func addDefaultLDAPResponseDescriptions(packet *ber.Packet) error {
 	packet.Children[1].Children[1].Description = "Matched DN (" + err.(*Error).MatchedDN + ")"
 	packet.Children[1].Children[2].Description = "Error Message"
 	if len(packet.Children[1].Children) > 3 {
-		packet.Children[1].Children[3].Description = "Referral"
+		if (packet.Children[1].Children[3].Tag == 3) {
+			packet.Children[1].Children[3].Description = "Referral"
+		} else if (packet.Children[1].Children[3].Tag == 7) {
+			packet.Children[1].Children[3].Description = "Credentials"
+		}
 	}
 	if len(packet.Children) == 3 {
 		return addControlDescriptions(packet.Children[2])
