@@ -6,4 +6,4 @@ require (
 
 )
 
-replace github.com/mellium/sasl => github.com/rosstimothy/sasl v0.0.0-20190103155601-6422c9fdeec5
+replace github.com/mellium/sasl => github.com/rosstimothy/sasl v0.0.0-20190103155601-73ae85b9b538
