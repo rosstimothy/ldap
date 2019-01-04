@@ -165,6 +165,7 @@ func (l *Conn) SaslBind() error {
 	if err != nil {
 		return err
 	}
+	l.Debug.Printf("SPN: %s", spn)
 	client := sasl.NewClient(sasl.GSSAPI(spn))
 
 	more, resp, err := client.Step(nil)
