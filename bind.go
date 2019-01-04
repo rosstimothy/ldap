@@ -180,6 +180,7 @@ func (l *Conn) SaslBind() error {
 			return err
 		}
 		if !more {
+			l.Debug.Printf("no more :(")
 			break
 		}
 
