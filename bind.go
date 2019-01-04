@@ -188,8 +188,8 @@ func (l *Conn) SaslBind() error {
 		res, err := l.sendSaslBindRequest(resp)
 		if err != nil {
 			if e, ok := err.(*Error); ok {
-				if e.ResultCode != LDAPResultSaslBindInProgress {
-					return errors.New("authentication failed")
+				if e.ResultCode != LDAPResultSaslBindInProgress  && e.ResultCode != ErrorDebugging {
+					return errors.New("authentication failed1")
 				}
 			}
 
@@ -197,7 +197,7 @@ func (l *Conn) SaslBind() error {
 		}
 		if res == nil {
 			l.Debug.Printf("bind result nil!")
-			return errors.New("authentication failed")
+			return errors.New("authentication failed2")
 		}
 
 		l.Debug.Printf("Starting next step, res was : %+v", res)
