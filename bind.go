@@ -145,7 +145,10 @@ type SaslBindResult struct {
 
 func (l *Conn) spn() (string, error) {
 	addr := l.conn.RemoteAddr().String()
-	addr = strings.TrimSuffix(addr, ":389")
+	idx := strings.LastIndex(addr, ":")
+	if idx != -1 {
+		addr = addr[:idx]
+	}
 	l.Debug.Printf("connected to %s", addr)
 	names, err := net.LookupAddr(addr)
 	if err != nil {
@@ -156,7 +159,9 @@ func (l *Conn) spn() (string, error) {
 		return "", errors.New("no host names found")
 	}
 
-	return fmt.Sprintf("ldap/%s", names[0]), nil
+	host := strings.TrimSuffix(names[0], ".")
+
+	return fmt.Sprintf("ldap/%s", host), nil
 }
 
 //SaslBind performs an ldap sasl bind
