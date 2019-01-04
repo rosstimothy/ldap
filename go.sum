@@ -8,8 +8,7 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGi
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rosstimothy/sasl v0.0.0-20190103155601-3be10fb31315 h1:cPKDp+nB7MV8+AnEAQWRhRdSFxTJ9GYSpMrfSJxMXx8=
-github.com/rosstimothy/sasl v0.0.0-20190103155601-3be10fb31315/go.mod h1:kNgFDj//wy8/kydLxMhjIYzsa7RXk7kTO+OXTAnYth8=
+github.com/rosstimothy/sasl v0.0.0-20190103155601-6422c9fdeec5/go.mod h1:kNgFDj//wy8/kydLxMhjIYzsa7RXk7kTO+OXTAnYth8=
 github.com/sirupsen/logrus v1.2.0 h1:juTguoYk5qI21pwyTXY3B3Y5cOTH3ZUyZCg1v/mihuo=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
