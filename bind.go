@@ -152,11 +152,11 @@ func (l *Conn) spn() (string, error) {
 	l.Debug.Printf("connected to %s", addr)
 	names, err := net.LookupAddr(addr)
 	if err != nil {
-		l.Debug.Printf("lookup failed: %s", err.Error())
+		l.Debug.Printf("lookup failed: %v", err)
 		return "", errors.New("unable to lookup host")
 	}
 	if len(names) <= 0 {
-		return "", errors.New("no host names found")
+		return "", errors.New("no host name found")
 	}
 
 	host := strings.TrimSuffix(names[0], ".")
@@ -177,32 +177,24 @@ func (l *Conn) SaslBind() error {
 	for {
 		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 		if err != nil {
-			l.Debug.Printf("we got an error %v", err)
 			return err
 		}
 		if !more {
-			l.Debug.Printf("no more :(")
 			break
 		}
 
 		res, err := l.sendSaslBindRequest(resp)
 		if err != nil {
 			if e, ok := err.(*Error); ok {
-				if e.ResultCode != LDAPResultSaslBindInProgress  && e.ResultCode != ErrorDebugging {
-					return errors.New("authentication failed1")
+				if e.ResultCode != LDAPResultSaslBindInProgress {
+					return errors.New("authentication failed")
 				}
 			}
 
-			l.Debug.Printf("sent bind request, %v", err)
-		}
-		if res == nil {
-			l.Debug.Printf("bind result nil!")
-			return errors.New("authentication failed2")
+			l.Debug.Printf("bind response received, %v", err)
 		}
 
-		l.Debug.Printf("Starting next step, res was : %+v", res)
 		more, resp, err = client.Step([]byte(res.Credentials))
-		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 	}
 
 	l.Debug.Printf("all done binding")
