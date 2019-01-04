@@ -145,6 +145,7 @@ type SaslBindResult struct {
 
 func (l *Conn) spn() (string, error) {
 	addr := l.conn.RemoteAddr().String()
+	addr = strings.TrimSuffix(addr, ":389")
 	l.Debug.Printf("connected to %s", addr)
 	names, err := net.LookupAddr(addr)
 	if err != nil {
