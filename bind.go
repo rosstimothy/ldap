@@ -177,6 +177,7 @@ func (l *Conn) SaslBind() error {
 	for {
 		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 		if err != nil {
+			l.Debug.Printf("we got an error %v", err)
 			return err
 		}
 		if !more {
@@ -191,11 +192,16 @@ func (l *Conn) SaslBind() error {
 					return errors.New("authentication failed")
 				}
 			}
+
+			l.Debug.Printf("sent bind request, %v", err)
 		}
+
+		l.Debug.Printf("Starting next step")
 		more, resp, err = client.Step([]byte(res.Credentials))
 		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 	}
 
+	l.Debug.Printf("all done binding")
 	return nil
 }
 
