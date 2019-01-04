@@ -175,7 +175,7 @@ func (l *Conn) SaslBind() error {
 
 	more, resp, err := client.Step(nil)
 	for {
-		l.Debug.Printf("More: %t, Resp: %q, Err %s", more, resp, err.Error())
+		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 		if err != nil {
 			return err
 		}
