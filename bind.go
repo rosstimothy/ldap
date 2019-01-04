@@ -196,7 +196,7 @@ func (l *Conn) SaslBind() error {
 			l.Debug.Printf("sent bind request, %v", err)
 		}
 
-		l.Debug.Printf("Starting next step, resp was : %v", resp)
+		l.Debug.Printf("Starting next step, res was : %v", res)
 		a, b, c := client.Step([]byte(res.Credentials))
 		l.Debug.Printf("More: %t, Resp: %q, Err %v", a, b, c)
 	}
