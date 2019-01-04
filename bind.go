@@ -174,7 +174,7 @@ func (l *Conn) SaslBind() error {
 	client := sasl.NewClient(sasl.GSSAPI(spn))
 
 	more, resp, err := client.Step(nil)
-	// for {
+	for {
 		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 		if err != nil {
 			l.Debug.Printf("we got an error %v", err)
@@ -182,7 +182,7 @@ func (l *Conn) SaslBind() error {
 		}
 		if !more {
 			l.Debug.Printf("no more :(")
-			return nil//break
+			break
 		}
 
 		res, err := l.sendSaslBindRequest(resp)
@@ -201,9 +201,9 @@ func (l *Conn) SaslBind() error {
 		}
 
 		l.Debug.Printf("Starting next step, res was : %+v", res)
-		a, b, c := client.Step([]byte(res.Credentials))
-		l.Debug.Printf("More: %t, Resp: %q, Err %v", a, b, c)
-	// }
+		more, resp, err = client.Step([]byte(res.Credentials))
+		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
+	}
 
 	l.Debug.Printf("all done binding")
 	return nil
