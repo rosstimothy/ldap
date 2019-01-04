@@ -10,6 +10,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rosstimothy/sasl v0.0.0-20190103155601-59b4c5c4f8c3 h1:rwv6AEcpfapBCI7GXcZl9gf/rEXsvNO75TuT8RSxMfA=
 github.com/rosstimothy/sasl v0.0.0-20190103155601-59b4c5c4f8c3/go.mod h1:kNgFDj//wy8/kydLxMhjIYzsa7RXk7kTO+OXTAnYth8=
+github.com/rosstimothy/sasl v0.0.0-20190103155601-d8d9d55b0a81 h1:J4lbn/upwA7gteuy29TQsQAu+Bsxb2/WhMtyoDT7zz0=
+github.com/rosstimothy/sasl v0.0.0-20190103155601-d8d9d55b0a81/go.mod h1:kNgFDj//wy8/kydLxMhjIYzsa7RXk7kTO+OXTAnYth8=
 github.com/sirupsen/logrus v1.2.0 h1:juTguoYk5qI21pwyTXY3B3Y5cOTH3ZUyZCg1v/mihuo=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
