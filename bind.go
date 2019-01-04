@@ -197,8 +197,8 @@ func (l *Conn) SaslBind() error {
 		}
 
 		l.Debug.Printf("Starting next step")
-		more, resp, err = client.Step([]byte(res.Credentials))
-		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
+		a, b, c := client.Step([]byte(res.Credentials))
+		l.Debug.Printf("More: %t, Resp: %q, Err %v", a, b, c)
 	}
 
 	l.Debug.Printf("all done binding")
