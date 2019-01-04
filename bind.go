@@ -192,6 +192,7 @@ func (l *Conn) SaslBind() error {
 			}
 		}
 		more, resp, err = client.Step([]byte(res.Credentials))
+		l.Debug.Printf("More: %t, Resp: %q, Err %v", more, resp, err)
 	}
 
 	return nil
