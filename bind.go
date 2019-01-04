@@ -145,8 +145,10 @@ type SaslBindResult struct {
 
 func (l *Conn) spn() (string, error) {
 	addr := l.conn.RemoteAddr().String()
+	l.Debug.Printf("connected to %s", addr)
 	names, err := net.LookupAddr(addr)
 	if err != nil {
+		l.Debug.Printf("lookup failed: %s", err.Error())
 		return "", errors.New("unable to lookup host")
 	}
 	if len(names) <= 0 {
