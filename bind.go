@@ -171,7 +171,7 @@ func (l *Conn) SaslBind() error {
 		return err
 	}
 	l.Debug.Printf("SPN: %s", spn)
-	client := sasl.NewClient(sasl.GSSAPI(spn))
+	client := sasl.NewClient(sasl.NTLM(spn))
 
 	more, resp, err := client.Step(nil)
 	for {
@@ -210,7 +210,7 @@ func (l *Conn) sendSaslBindRequest(credentials []byte) (*SaslBindResult, error) 
 	request.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, "", "Name"))
 
 	sasl := ber.Encode(ber.ClassContext, ber.TypeConstructed, 3, nil, "SASL")
-	sasl.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, "GSSAPI", "Mechanism"))
+	sasl.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, "GSS-SPNEGO", "Mechanism"))
 	if len(credentials) > 0 {
 		sasl.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, string(credentials), "Credentials"))
 	}
